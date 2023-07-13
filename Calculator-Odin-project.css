@@ -18,11 +18,17 @@ h1 {
     width: 25%;
 }
 
-#calculator-display {
-    padding: 30px 30px;
-    font-size: 28px;
+#calculator-display-main {
+    padding: 10px 20px;
+    margin: 20px;
+    color: black;
+    font-size: 3rem;
     text-align: right;
     border: 2px solid black;
+}
+
+#calculator-result {
+    font-size: 3.5rem;
 }
 
 #calculator-buttons {
@@ -42,6 +48,7 @@ h1 {
     background-color: gray;
     font-size: 20px;
     font-weight: bold;
+    cursor: pointer;
     margin: 5px;
     padding: 25px 5px;
     text-align: center;
