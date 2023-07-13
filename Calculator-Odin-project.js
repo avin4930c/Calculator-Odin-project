@@ -36,7 +36,7 @@ function finalResult(operator, a, b) {
             return multiply(a, b).toString();
         case "/":
             return divide(a, b).toString();
-        case "pow":
+        case "^":
             return power(a, b).toString();
         case "%":
             return mod(a, b).toString();
@@ -48,7 +48,6 @@ function clearDisplay() {
     display.textContent = 0;
     displayResult.textContent = '';
 }
-
 function userDisplay() {
     btns.forEach(btn => btn.addEventListener("click", function(e) {
         if (!(this.classList[1]=="operators") && !operator && this.classList[1]=="number" && !finalresult) { //to get the first operand;
@@ -120,5 +119,5 @@ function userDisplay() {
         
     }))
 }
-
 userDisplay();
+
