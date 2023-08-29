@@ -51,7 +51,22 @@ function clearDisplay() {
 
 function userDisplay(e) {
     const clickedButton = e.target;
-    if (!(clickedButton.classList[1]=="operators") && !operator && clickedButton.classList[1]=="number" && !finalresult) { //to get the first operand;
+    if (clickedButton.value === "delete") {
+        if (finalresult) {
+            finalresult = finalresult.slice(0, -1);
+            display.textContent = finalresult;
+        } else if (operator && b) {
+            b = b.slice(0, -1);
+            display.textContent = display.textContent.slice(0, -1);
+        } else if (a) {
+            a = a.slice(0, -1);
+            display.textContent = display.textContent.slice(0, -1);
+        }
+        if (display.textContent == '') {
+            display.textContent = 0;
+        }
+    }
+    else if (!(clickedButton.classList[1]=="operators") && !operator && clickedButton.classList[1]=="number" && !finalresult) { //to get the first operand;
         console.log(1);
         if (!a) {
             display.textContent = clickedButton.value
@@ -121,15 +136,63 @@ function userDisplay(e) {
 }
 
 function handleKeyDown(e) {
-    const key = document.querySelector(`.buttons[data-value="${e.keyCode}"]`);
-    if (key) {
-      userDisplay({
-        target: key
-      });
+    const key = e.key;
+    const operators = ['+', '-', '*', '/', '^', '%'];
+    if (typeof(+key) == "number") {
+    if (a && operator) {
+        b += key;
+        display.textContent += key;
     }
-  }
+    else if (key >= '0' && key <= '9') {
+        if (!operator && !finalresult) {
+            if (!a) {
+                display.textContent = key;
+            } else {
+                display.textContent += key;
+            }
+            a += key;
+        } 
+    }
+    else if (operators.includes(key)) {
+        if (!a) {
+            a = '0';
+        }
+        if (!operator) {
+            display.textContent += ` ${key}`;
+        } else {
+            display.textContent = display.textContent.slice(0, -1) + key;
+        }
+        operator = key;
+    }
+    else if (key === '=' || key === 'Enter') {
+        if (a && b && operator) {
+            finalresult = calculateResult(operator, a, b);
+            displayResult.textContent = finalresult;
+            b = '';
+            operator = '';
+        }
+    }
+    
+    else if (key === 'Escape') {
+        clearDisplay();
+    }
+    }
+    
+}
 
 btns.forEach(btn => btn.addEventListener("click", userDisplay));
-btns.forEach(btn => btn.addEventListener("keydown", handleKeyDown));
+document.addEventListener("keydown", function(e) {
+    const key = e.key;
+    const allowedKeys = /^[0-9+\-*/^%=]$/;
 
-
+    if (key.match(allowedKeys)) {
+        document.querySelector(`[value="${key}"]`).click();
+        e.preventDefault();
+    } else if (key === "Enter") {
+        document.querySelector('[value="="]').click();
+        e.preventDefault();
+    } else if (key === "Escape") {
+        document.querySelector('[value="clear"]').click();
+        e.preventDefault();
+    }
+});
