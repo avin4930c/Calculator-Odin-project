@@ -48,76 +48,88 @@ function clearDisplay() {
     display.textContent = 0;
     displayResult.textContent = '';
 }
-function userDisplay() {
-    btns.forEach(btn => btn.addEventListener("click", function(e) {
-        if (!(this.classList[1]=="operators") && !operator && this.classList[1]=="number" && !finalresult) { //to get the first operand;
-            console.log(1);
-            if (!a) {
-                display.textContent = this.value
-            }
-            else {
-                display.textContent += this.value;
-            }
-            a += `${this.value}`;
+
+function userDisplay(e) {
+    const clickedButton = e.target;
+    if (!(clickedButton.classList[1]=="operators") && !operator && clickedButton.classList[1]=="number" && !finalresult) { //to get the first operand;
+        console.log(1);
+        if (!a) {
+            display.textContent = clickedButton.value
         }
-        else if (a && b && operator && (this.classList[1]=="operators")) { //to continue the operation without "=" by directly giving operators  // working
-            console.log(2);
-            let finalresultt = finalResult(operator, a, b);
-            display.textContent = finalresultt + ` ${this.value}`;
-            displayResult.textContent = finalresultt;
-            a = finalresultt;
+        else {
+            display.textContent += clickedButton.value;
+        }
+        a += `${clickedButton.value}`;
+    }
+    else if (a && b && operator && (clickedButton.classList[1]=="operators")) { //to continue the operation without "=" by directly giving operators  // working
+        console.log(2);
+        let finalresultt = finalResult(operator, a, b);
+        display.textContent = finalresultt + ` ${clickedButton.value}`;
+        displayResult.textContent = finalresultt;
+        a = finalresultt;
+        b = '';
+        operator = clickedButton.value;
+    }
+    else if (finalresult && clickedButton.classList[1]=="number" && !(clickedButton.classList[1]=="operators") && !operator && !b && !(clickedButton.value == "=")) { // to add numbers to finalresult
+        console.log(3);
+        finalresult += clickedButton.value;
+        displayResult.textContent = finalresult; //a // finalresult
+    }
+    else if (finalresult && clickedButton.classList[1]=="operators") { // to continue operation after final result
+        console.log(4);
+        a = finalresult;
+        b = '';
+        operator = clickedButton.value; 
+        display.textContent = `${a} ${operator}`;
+    }
+    else if (clickedButton.classList[1]=="operators") { // to get operators and avoid repeating operators
+        console.log(5);
+        if (!a) {
+            a = "0";
+        }
+        if (!operator) {
+            display.textContent += " " + clickedButton.value;
+        }
+        else {
+            display.textContent = display.textContent.slice(0, -1) + clickedButton.value;
+        }
+        operator = clickedButton.value;
+    }
+    else if (clickedButton.value=="=") { // to evaluate the finalresult
+        console.log("=");
+        if (a && b && operator) {
+            finalresult = finalResult(operator, a, b);
+            displayResult.textContent = finalresult;
             b = '';
-            operator = this.value;
+            operator = '';
         }
-        else if (finalresult && this.classList[1]=="number" && !(this.classList[1]=="operators") && !operator && !b) { // to add numbers to finalresult
-            console.log(3);
-            finalresult += this.value;
-            displayResult.textContent = finalresult; //a // finalresult
+    }
+    else if (a && operator && clickedButton.classList[1]=="number") { // to get second operand
+        console.log(6);
+        if (!b) {
+            display.textContent += (" " + clickedButton.value);
         }
-        else if (finalresult && this.classList[1]=="operators") { // to continue operation after final result
-            console.log(4);
-            a = finalresult;
-            b = '';
-            operator = this.value; 
-            display.textContent = `${a} ${operator}`;
+        else {
+            display.textContent += clickedButton.value;
         }
-        else if (this.classList[1]=="operators") { // to get operators and avoid repeating operators
-            console.log(5);
-            if (!a) {
-                a = "0";
-            }
-            if (!operator) {
-                display.textContent += " " + this.value;
-            }
-            else {
-                display.textContent = display.textContent.slice(0, -1) + this.value;
-            }
-            operator = this.value;
-        }
-        else if (this.value=="=") { // to evaluate the finalresult
-            console.log("=");
-            if (a && b && operator) {
-                finalresult = finalResult(operator, a, b);
-                displayResult.textContent = finalresult;
-                b = '';
-                operator = '';
-            }
-        }
-        else if (a && operator && this.classList[1]=="number") { // to get second operand
-            console.log(6);
-            if (!b) {
-                display.textContent += (" " + this.value);
-            }
-            else {
-                display.textContent += this.value;
-            }
-            b += `${this.value}`;
-        }
-        else if (this.value = "clear") {
-            clearDisplay();
-        }
-        
-    }))
+        b += `${clickedButton.value}`;
+    }
+    else if (clickedButton.value = "clear") {
+        clearDisplay();
+    }
+    
 }
-userDisplay();
+
+function handleKeyDown(e) {
+    const key = document.querySelector(`.buttons[data-value="${e.keyCode}"]`);
+    if (key) {
+      userDisplay({
+        target: key
+      });
+    }
+  }
+
+btns.forEach(btn => btn.addEventListener("click", userDisplay));
+btns.forEach(btn => btn.addEventListener("keydown", handleKeyDown));
+
 
